@@ -30,11 +30,83 @@ class Person {
             let randomPerson = new Person(
                 getRandomGivenName(),
                 getRandomFamilyName(),
-                getRandomNumber(42) + 18);
+                getRandomNumber(42) + 18
+            );
             randomPeople.push(randomPerson);
         }
         return randomPeople;
     }
 }
 
-console.log(Person.generateRandomPeople(2));
+
+
+class Student extends Person {
+    constructor(firstName, lastName, age, grades, teacherId, id = uuid.v4()) {
+        super(firstName, lastName, age, id);
+        this.teacherId = teacherId;
+        this.grades = grades;
+    }
+
+    getTeacher(teachers) {
+        return teachers.find(teacher => teacher.id == this.teacherId);
+    }
+
+    static generateRandomPeople(num, validIds) {
+        return super.generateRandomPeople(num).map(person => new Student(
+            person.firstName,
+            person.lastName,
+            person.age,
+            this.generateRandomGrades(),
+            validIds[getRandomNumber(validIds.length)],
+            person.id
+        ));
+    }
+
+    static generateRandomGrades () {
+        let numberOfGrades = getRandomNumber(10);
+        let grades = [];
+        for (let i = 0; i < numberOfGrades; i++) {
+            grades.push(getRandomNumber(100));
+        }
+        return grades;
+    }
+}
+
+class Teacher extends Person {
+    constructor(firstName, lastName, age, id = uuid.v4()) {
+        super(firstName, lastName, age, id);
+    }
+
+    static generateRandomPeople(num) {
+        // let people =  super.generateRandomPeople(num);
+        // let teachers = []
+        // for (let i = 0; i < people.length; i++) {
+        //     const person = people[i];
+        //     teachers.push(new Teacher(
+        //         person.firstName,
+        //         person.lastName,
+        //         person.age,
+        //         person.id
+        //     ));
+        // }
+
+        return super.generateRandomPeople(num).map(person => new Teacher(
+            person.firstName,
+            person.lastName,
+            person.age,
+            person.id
+        ));
+    }
+
+    getMyStudents(students) {
+        return students.filter(student => student.teacherId == this.id);
+    }
+}
+
+let teachers = Teacher.generateRandomPeople(2);
+let students = Student.generateRandomPeople(5, teachers.map(teacher => teacher.id));
+console.log (teachers);
+console.log (students);
+
+console.log(teachers[0].getMyStudents(students));
+console.log(students[0].getTeacher(teachers));
