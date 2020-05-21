@@ -1,7 +1,18 @@
+// https://nodejs.org/api/fs.html
 const fs = require("fs");
+// https://nodejs.org/api/path.html
 const path = require("path");
+// https://nodejs.org/api/util.html
+const util = require("util");
 
 const FILE_PATH = path.join(__dirname, "People.json");
+// const LOG_FILE_PATH = path.join(__dirname, "debug.log")
+// const LOG_FILESTREAM = fs.createWriteStream(LOG_FILE_PATH, {flags : "w"});
+
+// console.log = (v) => {
+//     LOG_FILESTREAM.write(util.format(v) + "\n");
+//     process.stdout.write(util.format(v) + "\n");
+// }
 
 class Person {
     constructor(firstName, lastName, age, id) {
@@ -52,4 +63,4 @@ for (let i = 0; i < people.length; i++) {
 
 console.log(people[0]);
 
-fs.writeFileSync(FILE_PATH, JSON.stringify(people));
+// fs.writeFileSync(FILE_PATH, JSON.stringify(people));
