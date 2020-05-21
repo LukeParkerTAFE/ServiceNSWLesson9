@@ -106,16 +106,61 @@ class Teacher extends Person {
     }
 }
 
+class StudentDataReader {
+    constructor(fileName) {
+        this.fileName = fileName;
+    }
 
+    get fileArray() {
+        return JSON.parse(fs.readFileSync(this.fileName).toString()).map(studentRaw => new Student (
+            studentRaw.firstName,
+            studentRaw.lastName,
+            studentRaw.age,
+            studentRaw.grades,
+            studentRaw.teacherId,
+            studentRaw.id
+        ));
+    }
 
-let teachers = Teacher.generateRandomPeople(10);
-let students = Student.generateRandomPeople(100, teachers.map(teacher => teacher.id));
+    set fileArray(value) {
+        fs.writeFileSync(this.fileName, JSON.stringify(value));
+    }
 
-console.log(teachers);
-console.log(students);
+    getStudent(id) {
+        return this.fileArray.find(s => s.id == id);
+    }
 
-console.log(teachers[0].getMyStudents(students));
-console.log(students[0].getTeacher(teachers));
+    updateStudent(student) {
+        this.fileArray = this.fileArray.map(s => {
+            if (s.id == student.id) {
+                return student;
+            } else {
+                return s;
+            }
+        });
+    }
+
+    deleteStudent(id) {
+        this.fileArray = this.fileArray.filter(s => s.id != id);
+    }
+
+    addStudent(student) {
+        this.fileArray = this.fileArray.concat([student]);
+    }
+}
+
+let _studentData = new StudentDataReader(path.join(__dirname, "Students.json"));
+
+console.log(_studentData.getStudent('cc3e201c-7137-4dad-8ebe-c1e6ca638b7a'));
+
+// let teachers = Teacher.generateRandomPeople(10);
+// let students = Student.generateRandomPeople(100, teachers.map(teacher => teacher.id));
+
+// console.log(teachers);
+// console.log(students);
+
+// console.log(teachers[0].getMyStudents(students));
+// console.log(students[0].getTeacher(teachers));
 
 // Make sure these are at the top of your file!
 // const fs = require("fs");
